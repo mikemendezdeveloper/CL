@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		body {
+			height: 2000px;
+			background: url(images/bg.png);
+
+		}
+		#ball {
+	    background: red;
+	    width: 50px;
+	    height: 50px;
+	    border-radius: 50px;
+	    position: relative;
+	    left: 200px;
+	    top: 200px;
+	    margin-left: -25px;
+	    
+	    -webkit-transition: all 20ms cubic-bezier(0.250, 0.250, 0.750, 0.750); 
+	    -moz-transition: all 20ms cubic-bezier(0.250, 0.250, 0.750, 0.750); 
+	    -o-transition: all 20ms cubic-bezier(0.250, 0.250, 0.750, 0.750); 
+	    transition: all 20ms cubic-bezier(0.250, 0.250, 0.750, 0.750); /* linear */
+		/* THIS SEEMED TO MESSUP SAFARI
+	    -webkit-transition-timing-function: cubic-bezier(0.250, 0.250, 0.750, 0.750); 
+	    -moz-transition-timing-function: cubic-bezier(0.250, 0.250, 0.750, 0.750); 
+	    -o-transition-timing-function: cubic-bezier(0.250, 0.250, 0.750, 0.750); 
+	    transition-timing-function: cubic-bezier(0.250, 0.250, 0.750, 0.750); /* linear */
+    	}
+	</style>
+</head>
+<body>
+	<div id="ball"></div>
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+// Cross browser polyfill _____________________________________________
+
+(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] 
+                                   || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+ 
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+ 
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+}());
+
+// Properties _____________________________________________
+/*TO DO:
+*** Build object from each moving DOM element
+*** Use data attr to get things like speed
+*** Loop over each object to move each individually
+
+What do I need to know about each thing?
+* Start position 
+* End position 
+* Speed
+*/
+
+var movingElems = $('#ball'),
+	moveLen = movingElems.length,
+	i = 0,
+	scrollPos = $(window).scrollTop(),
+	dir = 1,
+	speed = 8,
+	fps = 60,
+	interval = 1000 / fps,
+	scrolled = false; 
+
+
+
+// Animation Logic ________________________________________
+
+function draw() {
+    setTimeout(function() {
+        window.requestAnimationFrame(draw);
+    	
+        if (scrolled){
+        	scrollPos = $(window).scrollTop();
+        }
+       	
+        	movingElems.css({"transform":"translate("+
+        	(.5*scrollPos) //X Position
+        	+"px," +
+        	(.05*scrollPos)//Y Position
+        	+ "px)"});
+        
+
+   
+    }, interval);
+
+}
+$(window).scroll(function (){
+	scrolled = true;
+});
+
+draw();
+
+
+/*
+Video Notes:
+* Video could 
+*/
+
+</script>
+</body>
+</html>
