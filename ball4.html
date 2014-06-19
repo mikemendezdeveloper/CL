@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		body {
+			height: 2000px;
+			background: url(images/bg.png);
+
+		}
+		#ball {
+	    background: red;
+	    width: 50px;
+	    height: 50px;
+	    border-radius: 50px;
+	    position: relative;
+	    left: 200px;
+	    top: 200px;
+	    margin-left: -25px;
+	/*
+	    -webkit-transition-timing-function: ease-out;
+	    -moz-transition-timing-function: ease-out;
+	    -o-transition-timing-function: ease-out;
+	    transition-timing-function: ease-out; /* linear */
+    	}
+	</style>
+</head>
+<body>
+	<div id="ball"></div>
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+// Cross browser polyfill _____________________________________________
+
+(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] 
+                                   || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+ 
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+ 
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+}());
+
+// Properties _____________________________________________
+/*TO DO:
+*** Build object from each moving DOM element
+*** Use data attr to get things like speed
+*** Loop over each object to move each individually
+
+What do I need to know about each thing?
+* Start position 
+* End position 
+* Speed
+*/
+
+var movingElems = $('#ball'),
+	moveLen = movingElems.length,
+	i = 0,
+	scrollPos = 0,
+	dir = 1,
+	speed = 8,
+	fps = 60,
+	interval = 1000 / fps,
+	scrolled = false,
+	destination = 0,
+	newDestination = 0,
+	anim;
+
+
+// Animation Logic ________________________________________
+
+function move(direction){
+	scrollPos += direction;
+	
+
+	movingElems.css({"transform":"translate("+
+	(scrollPos) //X Position
+	+"px," +
+	(scrollPos)//Y Position
+	+ "px)"});
+};
+
+
+function draw() {
+    anim = window.setTimeout(function() {
+        window.requestAnimationFrame(draw);
+       	if(scrollPos < destination){
+       		move(.5);
+        }
+        else if (scrollPos > destination){
+        	move(-.5);
+        }
+        else {
+        	//stop the animation?
+        }
+    }, interval);
+
+}
+$(window).scroll(function (){
+
+	newDestination = Math.min($(window).scrollTop());
+
+	if ( (destination + 20) < newDestination){ //only update on big movement
+		destination =  newDestination;
+		//cancel any current animations
+		window.clearTimeout(anim);
+		draw();
+	}
+	else if ( (destination - 20) > newDestination){ //only update on big movement
+		destination =  newDestination;
+		//cancel any current animations
+		window.clearTimeout(anim);
+		draw();
+	}
+
+});
+
+
+/*
+Video Notes:
+* Video could 
+*/
+
+</script>
+</body>
+</html>

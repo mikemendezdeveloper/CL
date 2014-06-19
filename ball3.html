@@ -8,17 +8,16 @@
 			height: 2000px;
 			background: url(images/bg.png);
 			position: relative;
-		
 		}
 		#ball {
 	    background: red;
-	    width: 50px;
-	    height: 50px;
-	    border-radius: 50px;
+	    height: 10px;
 	    position: relative;
-	    left: 200px;
 	    top: 300px;
 	    margin-left: -25px;
+
+	    /*This is said to help with making animation smoother */
+	    -webkit-transform: translateZ(0);
 	    
 	    -webkit-transition: all 20ms cubic-bezier(0.250, 0.250, 0.750, 0.750); 
 	    -moz-transition: all 20ms cubic-bezier(0.250, 0.250, 0.750, 0.750); 
@@ -33,7 +32,7 @@
 	</style>
 </head>
 <body>
-	<div id="ball"></div>
+	<div id="ball" style="width: 100px;left: 20px; overflow: hidden;"></div>
 
 <script src="js/jquery-1.8.3.min.js"></script>
 <script type="text/javascript">
@@ -95,7 +94,7 @@ var movingElems = [$('#ball'), $('body')],
 
 
 // Animation Logic ________________________________________
-
+/*
 function draw() {
     setTimeout(function() {
         window.requestAnimationFrame(draw);
@@ -114,10 +113,11 @@ function draw() {
 }
 
 draw();
-
+*/
 
 // Input (scroll)
 var scrollTimer;
+var newBall = $('#ball');
 
 function scrollEnded(){
     console.log('scrollEnded. Now do something astounding.');
@@ -136,22 +136,26 @@ function scrollEnded(){
 var lastScroll = $(window).scrollTop(),
     st = "";
 
-$(document).scroll(function(e) {
-	console.log('scrolling.');
-	//check which direction we are moving 
-	st = $(window).scrollTop();
-		if (st > lastScroll){
-	   console.log('scroll down');
-	   //start an animation that moves things up.
-	} else {
-	   console.log('scroll up');
-	}
-	lastScroll = st;
-	//just start moving in that direction 
-    if (scrollTimer != -1)
-        clearTimeout(scrollTimer);
+var up = function(elem){
+    
+};
 
-    scrollTimer = window.setTimeout('scrollEnded()', 200);
+var down = function(elem){
+	
+};
+
+$(document).scroll(function(e) {
+	//check which direction we are moving 
+	//st = $(window).scrollTop();
+		//if (st > lastScroll){
+	   up(newBall);
+	   //start an animation that moves things up.
+	//} else {
+	 //  console.log('scroll up');
+	 //  up(movingElems[i]);
+	//}
+	//lastScroll = st;
+	//just start moving in that direction 
 })
 
 /*
@@ -164,13 +168,10 @@ Currently we are just getting a destination and jumping there suddenly.
 *
 *Using .stop(true, false);
 
-Fairly smooth, but animations don't finish if you mouse off too quickly. These are also the default params. Also note that using .stop() on only one or the other doesn't help.
+This is great for stoping whatever the current animation was and starting a new one.
 
-$("#endfalse div").hover(function(){
     $(this).stop(true, false).animate({ width: "200px" });
-}, function() {
     $(this).stop(true, false).animate({ width: "100px" });
-});
 *
 *
 */
