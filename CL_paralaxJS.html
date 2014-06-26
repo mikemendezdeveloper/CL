@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		body {
+			height: 2000px;
+			background: url(images/bg.png);
+
+		}
+		#ball {
+	    background: red;
+	    width: 50px;
+	    height: 50px;
+	    border-radius: 50px;
+	    position: relative;
+	    left: 200px;
+	    top: 200px;
+	    margin-left: -25px;
+	/*
+	    -webkit-transition-timing-function: ease-out;
+	    -moz-transition-timing-function: ease-out;
+	    -o-transition-timing-function: ease-out;
+	    transition-timing-function: ease-out; /* linear */
+    	}
+	</style>
+</head>
+<body>
+	<div id="ball"></div>
+
+<script src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+// Cross browser polyfill -------------------------------
+
+(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] 
+                                   || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+ 
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+ 
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+}());
+// END Cross browser polyfill -------------------------------
+
+
+
+
+//Initialize all moving elements
+var movingElems = $(".parallax");
+
+	movingElems.each(function(i, elem){
+		var self = $(this);
+		//get data attribute for extra offset?
+		//Calculate original position based on dist from top of page?
+		elem.topOffset = self.offset().top * -1;
+		//Set the left/right offset of the element based on its topOffset
+		elem.side = self.hasClass("left") ? "left" : "right";
+		
+		self.css(elem.side, elem.topOffset);
+
+	});
+
+
+// Animation Logic -------------------------------
+function move(scrollPos){
+	movingElems.each(function(i, elem){
+		var self = $(this);
+		elem.topOffset += scrollPos;
+		if (elem.side === "left"){
+			self.stop(true, false).animate({left: elem.topOffset}, 300, "linear");
+		}
+		else {
+			self.stop(true, false).animate({right: elem.topOffset}, 300, "linear");
+		}
+	})
+};
+
+$(window).scroll(function (){
+
+	var scrollPos = Math.min($(window).scrollTop());
+
+	move(scrollPos);
+
+});
+
+</script>
+</body>
+</html>

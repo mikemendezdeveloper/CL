@@ -73,7 +73,7 @@ What do I need to know about each thing?
 var movingElems = $('#ball'),
 	moveLen = movingElems.length,
 	i = 0,
-	scrollPos = $('#ball').offset().top,//set initial position of object to be moved
+	scrollPos = 200,//$('#ball').offset().top,//set initial position of object to be moved
 	dir = 1,
 	speed = 8,
 	fps = 60,
@@ -81,55 +81,35 @@ var movingElems = $('#ball'),
 	scrolled = false,
 	destination = 0,
 	newDestination = 0,
+	finalPosition = 100,
 	anim;
 
 
 // Animation Logic ________________________________________
 
 function move(direction){
-	scrollPos += direction;
-	
+	if (destination < finalPosition){ //&& currentPosition < finalPosition
+		movingElems.stop(true, false).animate({left: destination}, 300, "linear");
+	}
 
-	movingElems.css({"transform":"translate("+
-	(scrollPos) //X Position
-	+"px," +
-	(scrollPos)//Y Position
-	+ "px)"});
 };
 
 
-function draw() {
-    window.setTimeout(function() {
-        anim = window.requestAnimationFrame(draw);
-        console.log("scrollPos" + scrollPos);
-        console.log("destination" + destination);
-       	if(scrollPos < destination){
-       		move(1);
-        }
-        else if (scrollPos > destination){
-        	move(-1);
-        }
-        else {
-        	//stop the animation?
-        }
-    }, interval);
-
-}
 $(window).scroll(function (){
 
 	newDestination = Math.min($(window).scrollTop());
 
-	if ( (destination + 20) < newDestination){ //only update on big movement
+	if ( (destination + 10) < newDestination){ //only update on big movement
 		destination =  newDestination;
 		//cancel any current animations
 		cancelAnimationFrame(anim);
-		draw();
+		move();
 	}
-	else if ( (destination - 20) > newDestination){ //only update on big movement
+	else if ( (destination - 10) > newDestination){ //only update on big movement
 		destination =  newDestination;
 		//cancel any current animations
 		cancelAnimationFrame(anim);
-		draw();
+		move();
 	}
 
 });
