@@ -1,0 +1,61 @@
+#main {
+	min-height: 2300px;
+}
+#leftSidebarCover, #rightSidebarCover {
+	background: #ffffff;
+	height: 100%;
+	position: absolute;
+	z-index: 1000;
+	width: 10000px;
+	display: block !important;
+}
+#leftSidebarCover {
+    left: -10001px;
+}
+#rightSidebarCover {
+    right: -10001px;
+}
+#startedText {
+	margin-top: 85px;
+	margin-left: 80px;
+}
+.offsetLeft {
+	margin-left: -540px;
+}
+/* This is for HTML headers - not currently used
+.cl-header {
+	background-color: red !important;
+	color: #ffffff;
+}
+*/
+.cl-header {
+	margin: 40px 0;
+}
+
+div.section + .section {
+	float: right;
+}
+html {
+	overflow-x: hidden;
+}
+.bottle {
+	z-index: -1; /*Goes behind everthing*/
+}
+#bottle {
+	left: 186px;
+}
+#stem {
+	left: 271px;
+	position: absolute;
+	top: 0px;
+}
+/*These things all go behind the product */
+#shoes, #dancingGuy, #art {
+	z-index: -2;
+}
+
+
+
+
+
+
