@@ -13,7 +13,7 @@ movingElems.each(function(i, elem){
 	var initial = self.offset().top - timingValue;
 	console.log("initial: " + initial);
 
-	//if ( self.data("wait") ){initial += self.data("wait");}
+	if ( self.data("wait") ){initial += self.data("wait");}
 	//get data attribute for extra offset?
 	//Calculate original position based on dist from top of page?
 	elem.sideOffset = elem.maxOffset = initial * -1;
@@ -22,7 +22,8 @@ movingElems.each(function(i, elem){
 	elem.side = self.hasClass("left") ? "left" : "right";
 	if (self.hasClass("bottle")){
 		elem.side = "top";
-
+		//elem.sideOffset = elem.maxOffset = 1650;
+		//elem.startOffset = -945;
 	}
 	//Initialize an "extraOffset" property for keeping track past 0
 	elem.extraOffset = 0;
