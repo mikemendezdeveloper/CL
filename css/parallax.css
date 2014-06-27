@@ -1,6 +1,6 @@
 #leftSidebarCover, #rightSidebarCover {
 	background: #ffffff;
-	height: 100%;
+	height: 10000px;
 	position: absolute;
 	z-index: 1000;
 	width: 10000px;
@@ -39,7 +39,8 @@ html {
 	z-index: -1; /*Goes behind everthing*/
 }
 #bottle {
-	left: 186px;
+	left: 185px;
+	margin-top: -946px;
 }
 #stem {
 	left: 271px;
