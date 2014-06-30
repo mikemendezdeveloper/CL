@@ -13,12 +13,46 @@
     right: -10001px;
 }
 #startedText {
-	margin-top: 85px;
-	margin-left: 80px;
+	padding-top: 85px;
+	padding-left: 80px;
+}
+#objectsDart {
+	padding-top: 10px;
+}
+#quoteOne{
+	padding-left: 80px;
+	padding-top: 60px;
+	padding-bottom: 45px;
+}
+#gloves {
+	padding-top: 50px;
+}
+#playfulText{
+	padding-top: 70px;
+}
+#art {
+	padding-bottom: 80px;
+}
+#quoteTwo {
+	padding-bottom: 164px;
+}
+#shoes{
+	padding-top: 100px;
+}
+#text1{
+	padding-top: 180px;
+}
+#worker {
+	padding-top: 27px;
+}
+#text {
+	padding-top: 104px;
+	padding-left: 68px;
 }
 .offsetLeft {
 	margin-left: -540px;
 }
+
 /* This is for HTML headers - not currently used
 .cl-header {
 	background-color: red !important;
@@ -40,7 +74,8 @@ html {
 }
 #bottle {
 	left: 185px;
-	margin-top: -946px;
+	top: 1600px;
+	position: absolute;
 }
 #stem {
 	left: 271px;

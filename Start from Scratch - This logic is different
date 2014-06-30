@@ -1,0 +1,14 @@
+Start from Scratch - This logic is different
+
+What do I need?
+
+It starts positioned by CSS, but: 
+top = 0;
+
+(startDistance) The distance that it is from the top of the screen
+1584
+
+Only once scrollPos is > distance from top (startDistance)
+
+
+

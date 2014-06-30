@@ -4,20 +4,38 @@ var movingElems = $(".parallax"),
 	scrollPos = Math.min($(window).scrollTop()),
 	newPos = 0,
 	scrollDelta = 0,
-	timingValue = 200;
+	timingValue = 180,
+	initialScrollPos,
+	specialSpeed = .2;
+
+//Used for initialization, and then upon every scroll event.
+function scrolling (pageLoad) {
+	newPos = Math.min($(window).scrollTop());
+
+	scrollDelta = newPos - scrollPos;
+
+	scrollPos = newPos;//Remember to update scrollPos
+
+	pageLoad ? initialScrollPos = newPos : 0;
+
+	if (scrollDelta > 0 || pageLoad){ //Only move when scrolling down the page or on page load
+		moveLogic(scrollDelta, scrollPos);
+	}
+};
+
 
 //Initialize all elements
 movingElems.each(function(i, elem){
 	var self = $(this);
 	
 	var initial = self.offset().top - timingValue;
-	console.log("initial: " + initial);
 
 	if ( self.data("wait") ){initial += self.data("wait");}
 	//get data attribute for extra offset?
 	//Calculate original position based on dist from top of page?
 	elem.sideOffset = elem.maxOffset = initial * -1;
-	elem.startOffset = initial;
+	elem.startDistance = initial;
+	elem.speed = 1;
 	//Set the left/right offset of the element based on its topOffset
 	elem.side = self.hasClass("left") ? "left" : "right";
 
@@ -28,13 +46,24 @@ movingElems.each(function(i, elem){
 	//only for the bottle
 	if (self.hasClass("bottle")){
 		elem.side = "top";
-		
-		elem.sideOffset = elem.maxOffset = initial; //removed negation...
+		if ( self.is("#bottle") ){
+			elem.startDistance = 1600;
+			elem.sideOffset = 1600;
+			elem.maxOffset = 2120;
+			elem.speed = specialSpeed;
+		}
+	}
+	if ( self.is("#stem") ){
+		elem.maxOffset = 215;
 
-		elem.startOffset = initial;
+		elem.stem = true;
+		elem.speed = specialSpeed;
 	}
 	
 	self.css(elem.side, elem.sideOffset);
+
+	//set initial position, in case page wasn't at the top on load.
+	scrolling("firstPageLoad");
 	
 });
 
@@ -52,50 +81,49 @@ function move(elem, self){
 	}
 };
 
-function xLogic(scrollDelta, scrollPos){
+function moveLogic(scrollDelta, scrollPos){
 	movingElems.each(function(i, elem){
-		var self = $(this);
-
-								if (i == 1){
-									console.log("scrollDelta" + scrollDelta);
-									console.log("before" + elem.sideOffset);
-								}
-								if (i == 1){console.log("scrollPos: " + scrollPos);console.log("startOffset: " + elem.startOffset);}
+		var self = $(this),
+			delay = 200; //for tuning bottle
 		
-		if (scrollPos <= elem.startOffset){
-			elem.extraOffset = 0;
+							
+		if (elem.side === "top"){//bottle only logic
+						if (elem.stem){
+							console.log("scrollDelta" + scrollDelta);
+							console.log("sideOffset" + elem.sideOffset);
+							console.log("maxOffset" + elem.maxOffset);
+							console.log("startDistance" + elem.startDistance);
+							console.log("scrollPos" + scrollPos);
+						}
+			//delay before moving bottle and stem
+			if (scrollPos > 300){
+				elem.sideOffset += (scrollDelta * specialSpeed);
+
+				if (elem.sideOffset < 0){elem.sideOffset = 0;}
+
+				if (elem.sideOffset > elem.maxOffset){
+					specialSpeed = .7;
+					elem.sideOffset = elem.maxOffset;
+				}
+
+					move(elem, self);
+			}
 		}
 		else {
-			elem.extraOffset = (scrollPos - elem.startOffset); //start tracking extra offset
-			if (elem.sideOffset != 0){//if its not already zero, set it to 0 and move it there.
-				elem.sideOffset = 0;
+			elem.sideOffset += initialScrollPos;
 
-				move(elem, self);
-			}
-		}
+			elem.sideOffset += scrollDelta;
 
-		if (Math.abs(elem.extraOffset) == 0){ //If there is no extraOffset then move
-		
-			elem.sideOffset += scrollDelta; 
-								if (i == 1){console.log("after" + elem.sideOffset);}
-			if (elem.sideOffset > 0){
-				elem.sideOffset = 0;
-			}
+			if (elem.sideOffset > 0){elem.sideOffset = 0;}
+
 			if (elem.sideOffset < elem.maxOffset){elem.sideOffset = elem.maxOffset;}
 
 			move(elem, self);
 		}
-							if (i == 1){console.log("sideOffset: " + elem.sideOffset + " extraOffset: " + elem.extraOffset);}
 	})
 };
 
+
 $(window).scroll(function (){ 
-	newPos = Math.min($(window).scrollTop());
-
-	scrollDelta = newPos - scrollPos;
-
-	scrollPos = newPos;//Remember to update scrollPos
-
-	xLogic(scrollDelta, scrollPos);
-
+	scrolling();
 });
