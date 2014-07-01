@@ -1,6 +1,6 @@
 #leftSidebarCover, #rightSidebarCover {
 	background: #ffffff;
-	height: 10000px;
+	height: 100%;
 	position: absolute;
 	z-index: 1000;
 	width: 10000px;
@@ -35,6 +35,7 @@
 }
 #quoteTwo {
 	padding-bottom: 164px;
+	padding-left: 70px;
 }
 #shoes{
 	padding-top: 100px;
