@@ -1,3 +1,13 @@
+#cover {
+	background: #ffffff;
+	height: 93%;
+	width: 100%;
+	position: absolute;
+	z-index: 1;
+}
+.jsEnabled{
+	left: 1000000px;
+}
 #leftSidebarCover, #rightSidebarCover {
 	background: #ffffff;
 	height: 100%;
@@ -15,6 +25,9 @@
 #startedText {
 	padding-top: 85px;
 	padding-left: 80px;
+}
+#sku {
+	padding-right: 65px;
 }
 #objectsDart {
 	padding-top: 10px;

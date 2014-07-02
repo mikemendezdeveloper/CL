@@ -1,20 +1,32 @@
-$( document ).ready(function() {
+$("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 	/*Test before running the rest of the script */
-
 
 	function initParallax(){
 		var movingElems = $(".parallax"),
-		bottle = $("#bottle"),
-		scrollPos = 0,
-		newPos = 0,
-		scrollDelta = 0,
-		timingValue = 180,
-		initialScrollPos,
-		specialSpeed = .2;
+			headers = $(".cl-header"),
+			bottle = $("#bottle"),
+			scrollPos = 0,
+			newPos = 0,
+			scrollDelta = 0,
+			timingValue = 180,
+			initialScrollPos,
+			specialSpeed = .2,
+			headerIndex = 0;
+
+		function fadeHeaders(){
+			headers.each(function(i, elem){
+				if ( elem.offsetTop < (newPos + 200) ){
+					var self = $(this);
+					self.fadeTo("slow", 1);
+				}
+			});
+		};
 
 		//Used for initialization, and then upon every scroll event.
 		function scrolling (pageLoad) {
 			newPos = Math.min($(window).scrollTop());
+
+			fadeHeaders(newPos);
 
 			scrollDelta = newPos - scrollPos;
 
@@ -27,6 +39,14 @@ $( document ).ready(function() {
 			}
 		};
 
+		//init headers
+		headers.each(function(i, elem){
+			var self = $(this);
+			elem.offsetTop = self.offset().top - timingValue;
+			self.css( "opacity", 0 ); //initially set opacity to 0
+		});
+
+		//init moving elems
 		movingElems.each(function(i, elem){
 			var self = $(this);
 			
@@ -136,5 +156,10 @@ $( document ).ready(function() {
 	}
 	*/
 	initParallax();
-
-});
+	
+	/*fade out loading cover*/
+	var whiteCover = $("#cover");
+	whiteCover.fadeOut("slow");
+	whiteCover.addClass("jsEnabled");
+	
+});//end ready
