@@ -1,3 +1,15 @@
+.moveLeft {
+	left: -388px;
+}
+.moveRight{
+	right: -388px;
+}
+#cl-banner {
+	background: #000000;
+}
+#cl-banner .section{
+	float: left;
+}
 #cover {
 	background: #ffffff;
 	height: 93%;
@@ -88,7 +100,7 @@ html {
 }
 #bottle {
 	left: 185px;
-	top: 1600px;
+	top: 1712px;
 	position: absolute;
 }
 #stem {

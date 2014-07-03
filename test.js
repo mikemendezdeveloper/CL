@@ -1,21 +1,26 @@
+
 $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 	/*Test before running the rest of the script */
 
 	function initParallax(){
-		var movingElems = $(".parallax"),
+		var bannerElems = $("#cl-banner img"),
+			movingElems = $(".parallax"),
 			headers = $(".cl-header"),
 			bottle = $("#bottle"),
 			scrollPos = 0,
 			newPos = 0,
 			scrollDelta = 0,
-			timingValue = 180,
+			timingValue = 100,
 			initialScrollPos,
 			specialSpeed = .2,
-			headerIndex = 0;
+			headerIndex = 0,
+			stemPos = 0,
+			stemOffset = 120,
+			stemImg = 1876; //This is the exact height of the actual image slice
 
 		function fadeHeaders(){
 			headers.each(function(i, elem){
-				if ( elem.offsetTop < (newPos + 200) ){
+				if ( elem.offsetTop < (newPos + 130) ){
 					var self = $(this);
 					self.fadeTo("slow", 1);
 				}
@@ -25,7 +30,6 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 		//Used for initialization, and then upon every scroll event.
 		function scrolling (pageLoad) {
 			newPos = Math.min($(window).scrollTop());
-
 			fadeHeaders(newPos);
 
 			scrollDelta = newPos - scrollPos;
@@ -42,7 +46,7 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 		//init headers
 		headers.each(function(i, elem){
 			var self = $(this);
-			elem.offsetTop = self.offset().top - timingValue;
+			elem.offsetTop = self.offset().top;
 			self.css( "opacity", 0 ); //initially set opacity to 0
 		});
 
@@ -52,52 +56,62 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 			
 			var initial = self.offset().top - timingValue;
 
-			if ( self.data("wait") ){initial += self.data("wait");}
-			//get data attribute for extra offset?
 			//Calculate original position based on dist from top of page?
-			elem.sideOffset = elem.maxOffset = initial * -1;
 			elem.startDistance = initial;
 			elem.speed = 1;
-			//Set the left/right offset of the element based on its topOffset
-			elem.side = self.hasClass("left") ? "left" : "right";
-
-			//Initialize an "extraOffset" property for keeping track past 0
-			elem.extraOffset = 0;
-			elem.sideOffset = elem.maxOffset = initial * -1; //!!This is hardcoded to get around a bug.
 			
+			if ( self.hasClass("left") ){
+				elem.side = "left";
+				self.addClass("moveLeft");
+				//self.css("opacity", 0); //initially make all moving elems invisible.
+
+			}
+			else if ( self.hasClass("right") ) {
+				elem.side = "right";
+				self.addClass("moveRight");
+				//self.css("opacity", 0); //initially make all moving elems invisible.
+
+			}
+
 			//only for the bottle
 			if (self.hasClass("bottle")){
 				elem.side = "top";
 				if ( self.is("#bottle") ){
-					elem.startDistance = 1600;
-					elem.sideOffset = 1600;
-					elem.maxOffset = 2120;
+
+					elem.startDistance = elem.sideOffset = (stemImg + stemOffset - 287);//287 is just the distance that I want the bottle to initially lay over the stem
+					elem.maxOffset = elem.sideOffset + 500;
 					elem.speed = specialSpeed;
 				}
 			}
 			if ( self.is("#stem") ){
-				elem.maxOffset = 215;
-
+				elem.sideOffset = stemOffset; //was -8 or 8 before
+				elem.maxOffset = stemOffset + 200; //total amount the stem can move
 				elem.stem = true;
 				elem.speed = specialSpeed;
 			}
 			
 			self.css(elem.side, elem.sideOffset);
 
+
 			//set initial position, in case page wasn't at the top on load.
 			scrolling("firstPageLoad");
+
 		});
+
+
 		// Animation Logic -------------------------------
 		function move(elem, self){
 			//Actually Move the element
-			if (elem.side === "left"){
-				self.stop(true, false).animate({left: elem.sideOffset}, 300, "linear");
-			}
-			else if (elem.side === "top") {
+			if (elem.side === "top") {
 				self.stop(true, false).animate({top: (elem.sideOffset)}, 300, "linear");
 			}
+			else if (elem.side === "left"){
+				self.animate({left: 0}, 2000, "easeInOutQuad");
+				//self.fadeTo("slow", 1);
+			}
 			else {
-				self.stop(true, false).animate({right: elem.sideOffset}, 300, "linear");
+				self.animate({right: 0}, 2000, "easeInOutQuad");
+				//self.fadeTo("slow", 1);
 			}
 		};
 
@@ -108,31 +122,25 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 				
 									
 				if (elem.side === "top"){//bottle only logic
-								
-					//delay before moving bottle and stem
-					if (scrollPos > 300){
+								//console.log("scrollPos " + scrollPos);
+								//console.log("stemPos " + stemPos);
+								//console.log("elem.sideOffset " + elem.sideOffset);
+					if (scrollPos > delay && (scrollPos >= stemPos) ){ 
 						elem.sideOffset += (scrollDelta * specialSpeed); //So I can speed bottle up after stem stops moving
 
-						if (elem.sideOffset < 0){elem.sideOffset = 0;}
-
 						if (elem.sideOffset > elem.maxOffset){
-							specialSpeed = .7;
+							specialSpeed = .7; //When the stem stops moving, speed up the bottle's movement
 							elem.sideOffset = elem.maxOffset;
 						}
-
 							move(elem, self);
+							stemPos = scrollPos;
 					}
 				}
-				else {
-					elem.sideOffset += initialScrollPos;
-
-					elem.sideOffset += scrollDelta;
-
-					if (elem.sideOffset > 0){elem.sideOffset = 0;}
-
-					if (elem.sideOffset < elem.maxOffset){elem.sideOffset = elem.maxOffset;}
-
-					move(elem, self);
+				else if (scrollPos > elem.startDistance - 200){
+					if (!elem.animated){
+						move(elem, self);
+						elem.animated = true;
+					}
 				}
 			})
 		};
@@ -141,7 +149,31 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 		$(window).scroll(function (){ 
 			scrolling();
 		});
+
+		//Hid, and then Fade-In Banner Elements
+		(function (){
+			var i = 0,
+				len = bannerElems.length,
+				waitTime = 200;
+
+			bannerElems.each(function(i, elem){
+			var self = $(this);
+			self.css("opacity", 0);
+			});
+
+			function waitToFade (i) {
+				setTimeout(function(){
+					$(bannerElems[i]).fadeTo("slow", 1);
+				}, waitTime);
+				waitTime += 800;
+			};
+
+			for (i; i<len; i+=1){
+				waitToFade(i);
+			}
+		}());
 	};
+
 
 	/*****************/
 	//Test first
@@ -155,6 +187,7 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 		initParallax();
 	}
 	*/
+
 	initParallax();
 	
 	/*fade out loading cover*/
@@ -162,4 +195,5 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 	whiteCover.fadeOut("slow");
 	whiteCover.addClass("jsEnabled");
 	
+
 });//end ready
