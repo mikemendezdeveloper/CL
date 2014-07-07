@@ -34,6 +34,17 @@
 #rightSidebarCover {
     right: -10001px;
 }
+#scrollDown {
+	width: 120px;
+	background: #000000;
+	margin-top: 30px;
+	left: 326px;
+	text-align: center;
+	color: #ffffff;
+	padding: 5px;
+	text-transform: uppercase;
+	position: absolute;
+}
 #startedText {
 	padding-top: 85px;
 	padding-left: 80px;
@@ -99,14 +110,14 @@ html {
 	z-index: -1; /*Goes behind everthing*/
 }
 #bottle {
-	left: 185px;
-	top: 1712px;
+	left: 174px;
 	position: absolute;
+	top: 1876px; /*These settings are for when there is no JS running on the page.*/
 }
 #stem {
-	left: 271px;
+	left: 260px;
 	position: absolute;
-	top: 0px;
+	top: 120px; /*These settings are for when there is no JS running on the page.*/
 }
 /*These things all go behind the product */
 #shoes, #dancingGuy, #art {
