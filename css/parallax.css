@@ -15,7 +15,7 @@
 	height: 93%;
 	width: 100%;
 	position: absolute;
-	z-index: 1;
+	z-index: 10;
 }
 .jsEnabled{
 	left: 1000000px;
@@ -35,14 +35,9 @@
     right: -10001px;
 }
 #scrollDown {
-	width: 120px;
-	background: #000000;
 	margin-top: 30px;
-	left: 326px;
+	left: 330px;
 	text-align: center;
-	color: #ffffff;
-	padding: 5px;
-	text-transform: uppercase;
 	position: absolute;
 	z-index: 4;
 }

@@ -3,7 +3,7 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 	/*Test before running the rest of the script */
 
 	function initParallax(){
-		var bannerElems = $("#cl-banner img"),
+		var fadeInOnLoad = $("#cl-banner img"),
 			movingElems = $(".parallax"),
 			headers = $(".cl-header"),
 			bottle = $("#bottle"),
@@ -21,6 +21,8 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 			overlapAmount = 122,
 			movingUp = true;
 			stemImg = 1810; //This is the exact height of the actual image slice
+
+			fadeInOnLoad.push($("#bottle"), $("#stem"), $("#applicator"), $("#startedText"), $("#sku"), headers[0]);
 
 		scrollDownCTA.css("top", (winHeight - 300) + "px"); //Position CTA just above fold line.
 
@@ -66,9 +68,9 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 
 			scrollPos = newPos;//Remember to update scrollPos
 
-			pageLoad ? initialScrollPos = newPos : 0;
+			initialScrollPos = 0;
 
-			if (scrollDelta != 0 || pageLoad){ //Only move when scrolling or on page load
+			if (scrollDelta != 0 ){ //Only move when scrolling or on page load
 				moveLogic(scrollDelta, scrollPos);
 			}
 		};
@@ -86,14 +88,12 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 			var timingValue = 100;
 
 			//Tweak timing of individual items
-			if ( self.is("#startedText") || self.is("#sku") ){
-				var timingValue = 200;
-			}
+
 			if ( self.is("#video") || self.is("#objectsDart") ){
 				var timingValue = 200;
 			}
 			if ( self.is("#shoes") || self.is("#text1") ){
-				var timingValue = 400;
+				var timingValue = 700;
 			}
 			if ( self.is("#text") || self.is("#worker") ){
 				var timingValue = 600;
@@ -105,27 +105,29 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 			//Calculate original position based on dist from top of page
 			elem.startDistance = initial;
 			elem.speed = 1;
+			//self.css("opacity", 0); //initially make all moving elems invisible.
+
 			
 			if ( self.hasClass("left") ){
 				elem.side = "left";
-				self.addClass("moveLeft");
+				//self.addClass("moveLeft");
 				self.css("opacity", 0); //initially make all moving elems invisible.
 			}
 			else if ( self.hasClass("right") ) {
 				elem.side = "right";
-				self.addClass("moveRight");
+				//self.addClass("moveRight");
 				self.css("opacity", 0); //initially make all moving elems invisible.
 			}
 
 			//stem only
 			if ( self.is("#stem") ){
 				elem.side = "top";
-				elem.topOffset = initial;
-				initialStemPos = initial;
+				elem.topOffset = 192;
+				initialStemPos = 192;
 				elem.maxOffset = -270; //total amount the stem can move
 				elem.minOffset = 2240;
 				elem.stem = true;
-				elem.speed = initialStemPos;
+				elem.speed = 1;
 				elem.isBottle = false;
 			}
 			//applicator only !! THIS WAS A COPY PASTE, FILL IN WITH REAL VALUES
@@ -136,7 +138,7 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 				elem.maxOffset = 1540; //total amount the stem can move
 				elem.minOffset = elem.startDistance;
 				elem.stem = true;
-				elem.speed = initialStemPos;
+				elem.speed = 1;
 				elem.isBottle = false;
 			}
 			
@@ -160,10 +162,10 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 
 
 		// Animation Logic -------------------------------
-		function move(elem, self){
+		function move(elem, self, timing){
 			//Actually Move the element
 			if (elem.side === "top") {
-				self.stop(true, false).animate({top: (elem.topOffset)}, 0, "linear"); //adjust the number 0 here to give some delay
+				self.stop(true, false).animate({top: (elem.topOffset)}, timing, "linear"); //adjust the number 0 here to give some delay
 			}
 			else if (elem.side === "left"){
 				self.animate({left: 0}, 1000, "easeInOutQuad");
@@ -180,42 +182,47 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 		function moveLogic(scrollDelta, scrollPos){
 			movingElems.each(function(i, elem){
 				var self = $(this);
+				var currentStemOffset = movingElems[14].topOffset;
+				var posBelowStem = (stemImg + currentStemOffset - overlapAmount);
+				if(self.is("#stem")){;}
 							
 				if (elem.side === "top"){//product only logic
-
-					if (scrollPos > 1200 && elem.isBottle ){ //start moving the bottle down instead of up
-						if (typeof elem.savedPosition == "undefined"){ //only save once
-							elem.savedPosition = elem.topOffset; //Store this position to use later
-						}
-						specialSpeed = 1;
-						elem.topOffset += scrollDelta * specialSpeed;
+		
+					if (elem.isBottle && (currentStemOffset <= -169) ){ //start moving the bottle down instead of up
+						specialSpeed = 1;//start moving the bottle faster
+						elem.topOffset += scrollDelta * specialSpeed;//Move down not up
 						movingUp = false;
 					} 
+					//if things were moving down, but now we should start moving up then...
 					else if (!movingUp && elem.isBottle){ //special thing to do when transitioning from up to down.
 						specialSpeed = .3;
-						elem.topOffset = elem.savedPosition;
+						elem.topOffset = posBelowStem; //set bottle right under stem - SNAP POINT
 						elem.topOffset -= scrollDelta * specialSpeed;
 						movingUp = true;
-					} else {
+					} else {//move everything up.
 						specialSpeed = .3;
 						elem.topOffset -= scrollDelta * specialSpeed; 
+						if (elem.isBottle){
+							elem.topOffset = posBelowStem;
+						}
 					}
 					
-					if (self.is("#stem")){
-						console.log("elem.topOffset " + elem.topOffset);
-						console.log("elem.maxOffset " + elem.maxOffset);
-						console.log("elem.minOffset " + elem.minOffset);
-						console.log("scrollPos " + scrollPos);
+					if (elem.isBottle && (scrollPos > 1650) ){ //this is a snap POINT
+						elem.topOffset = elem.minOffset;
+						move(elem, self, 200);
 					}
 
 					if (elem.topOffset >= elem.maxOffset && elem.topOffset <= elem.minOffset){
-						console.log("moving");
-						move(elem, self);
-					}	
+						if ( elem.isBottle && (elem.topOffset <= posBelowStem) ) {
+							elem.topOffset = posBelowStem;
+						}
+						move(elem, self, 0);
+					}
+				
 				}
 				else if (scrollPos > elem.startDistance - 200){
 					if (!elem.animated){
-						move(elem, self);
+						move(elem, self, 0);
 						elem.animated = true;
 					}
 				}
@@ -227,22 +234,24 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 			scrolling();
 		});
 
-		//Hid, and then Fade-In Banner Elements
+		//Hide, and then Fade-In Banner Elements
 		(function (){
 			var i = 0,
-				len = bannerElems.length,
+				len = fadeInOnLoad.length,
 				waitTime = 200;
 
-			bannerElems.each(function(i, elem){
+			fadeInOnLoad.each(function(i, elem){
 			var self = $(this);
 			self.css("opacity", 0);
 			});
 
 			function waitToFade (i) {
 				setTimeout(function(){
-					$(bannerElems[i]).fadeTo("slow", 1);
+					$(fadeInOnLoad[i]).fadeTo("slow", 1);
 				}, waitTime);
-				waitTime += 800;
+				if (waitTime < 2500){
+					waitTime += 800;
+				}
 			};
 
 			for (i; i<len; i+=1){
@@ -264,13 +273,18 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 		initParallax();
 	}
 	*/
+	window.setTimeout(
+		function(){
+			window.scrollTo(0, 0);
+			console.log("scrolllll");
+			/*fade out loading cover*/
+			var whiteCover = $("#cover");
+			whiteCover.fadeOut("slow");
+			whiteCover.addClass("jsEnabled");
+		}, 1000
+	);
 
 	initParallax();
-	
-	/*fade out loading cover*/
-	var whiteCover = $("#cover");
-	whiteCover.fadeOut("slow");
-	whiteCover.addClass("jsEnabled");
 	
 
 });//end ready
