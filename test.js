@@ -1,5 +1,5 @@
 
-$("#startedText").ready(function(){ //fixes incorrect initial offset issue.
+$("#worker").ready(function(){ //fixes incorrect initial offset issue.
 	/*Test before running the rest of the script */
 
 	function initParallax(){
@@ -23,6 +23,20 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 			stemImg = 1810; //This is the exact height of the actual image slice
 
 			fadeInOnLoad.push($("#bottle"), $("#stem"), $("#applicator"), $("#startedText"), $("#sku"), headers[0]);
+
+			if (winHeight > 850){
+				fadeInOnLoad.push(headers[1], $("#video"), $("#objectsDart"));
+			}
+			if (winHeight > 1600){
+				fadeInOnLoad.push($("#quoteOne"), $("#gloves"), $("#art"), $("#playfulText"));
+			}
+			if (winHeight > 2400){
+				fadeInOnLoad.push(headers[2], $("#quoteTwo"), $("#dancingGuy"));
+			}
+			if (winHeight > 3200){
+				fadeInOnLoad.push($("#shoes"), $("#text1"), $("#text"), $("#worker") );
+			}
+
 
 		scrollDownCTA.css("top", (winHeight - 300) + "px"); //Position CTA just above fold line.
 
@@ -73,6 +87,7 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 			if (scrollDelta != 0 ){ //Only move when scrolling or on page load
 				moveLogic(scrollDelta, scrollPos);
 			}
+			$("#bottle").css("opacity", 1);
 		};
 
 		//init headers
@@ -165,7 +180,7 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 		function move(elem, self, timing){
 			//Actually Move the element
 			if (elem.side === "top") {
-				self.stop(true, false).animate({top: (elem.topOffset)}, timing, "linear"); //adjust the number 0 here to give some delay
+				self.stop(true, true).animate({top: (elem.topOffset)}, timing, "linear"); //adjust the number 0 here to give some delay
 			}
 			else if (elem.side === "left"){
 				self.animate({left: 0}, 1000, "easeInOutQuad");
@@ -276,15 +291,53 @@ $("#startedText").ready(function(){ //fixes incorrect initial offset issue.
 	window.setTimeout(
 		function(){
 			window.scrollTo(0, 0);
-			console.log("scrolllll");
 			/*fade out loading cover*/
 			var whiteCover = $("#cover");
 			whiteCover.fadeOut("slow");
 			whiteCover.addClass("jsEnabled");
-		}, 1000
-	);
+			initParallax();
 
-	initParallax();
-	
+		}, 1500
+	);
+/*
+	// left: 37, up: 38, right: 39, down: 40,
+	// spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
+	var keys = [37, 38, 39, 40];
+
+	function preventDefault(e) {
+	  e = e || window.event;
+	  if (e.preventDefault)
+	      e.preventDefault();
+	  e.returnValue = false;  
+	}
+
+	function keydown(e) {
+	    for (var i = keys.length; i--;) {
+	        if (e.keyCode === keys[i]) {
+	            preventDefault(e);
+	            return;
+	        }
+	    }
+	}
+
+	function wheel(e) {
+	  preventDefault(e);
+	}
+
+	function disable_scroll() {
+	  if (window.addEventListener) {
+	      window.addEventListener('DOMMouseScroll', wheel, false);
+	  }
+	  window.onmousewheel = document.onmousewheel = wheel;
+	  document.onkeydown = keydown;
+	}
+
+	function enable_scroll() {
+	    if (window.removeEventListener) {
+	        window.removeEventListener('DOMMouseScroll', wheel, false);
+	    }
+	    window.onmousewheel = document.onmousewheel = document.onkeydown = null;  
+	}
+*/
 
 });//end ready
