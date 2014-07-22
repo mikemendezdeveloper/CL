@@ -10,23 +10,26 @@
 #cl-banner .section{
 	float: left;
 }
+/* Commented out because I want to do this in BCC instead.
 #cover {
 	background: #ffffff;
 	height: 93%;
 	width: 100%;
 	position: absolute;
 	z-index: 10;
+	left: 1000000px;
 }
 .jsEnabled{
 	left: 1000000px;
 }
+*/
 #leftSidebarCover, #rightSidebarCover {
 	background: #ffffff;
 	height: 100%;
 	position: absolute;
 	z-index: 1000;
 	width: 10000px;
-	display: block !important;
+	display: none !important;
 }
 #leftSidebarCover {
     left: -10001px;
@@ -36,7 +39,7 @@
 }
 #scrollDown {
 	margin-top: 30px;
-	left: 330px;
+	left: 355px;
 	text-align: center;
 	position: absolute;
 	z-index: 4;
@@ -120,8 +123,7 @@ html {
 }
 #stem {
 	left: 280px;
-	position: absolute;
-	top: 120px; /*These settings are for when there is no JS running on the page.*/
+	top: 120px; 
 	z-index: 2;
 }
 #applicator{
@@ -129,12 +131,14 @@ html {
 	z-index: 0;
 	top: 1930px;
 	left:280px;
+	display: none;
 }
 #bottle {
 	left: 174px;
 	position: absolute;
-	top: 2250px; /*These settings are for when there is no JS running on the page.*/
+	top: 2250px; 
 	z-index: 1;
+	display: none;
 }
 /*These things all go behind the product */
 #shoes, #dancingGuy, #art {

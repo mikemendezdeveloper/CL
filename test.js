@@ -10,6 +10,7 @@ $("#worker").ready(function(){ //fixes incorrect initial offset issue.
 			scrollDownCTA = $("#scrollDown"),
 			scrollPos = 0,
 			winHeight = $(window).height(),
+			showEarly = 1,
 			newPos = 0,
 			scrollDelta = 0,
 			initialScrollPos,
@@ -19,16 +20,20 @@ $("#worker").ready(function(){ //fixes incorrect initial offset issue.
 			totalStemTravel = 200,
 			specialSpeed = .3,
 			overlapAmount = 122,
-			movingUp = true;
+			movingUp = true,
 			stemImg = 1810; //This is the exact height of the actual image slice
 
 			fadeInOnLoad.push($("#bottle"), $("#stem"), $("#applicator"), $("#startedText"), $("#sku"), headers[0]);
 
-			if (winHeight > 850){
+			if (winHeight > 1000){
 				fadeInOnLoad.push(headers[1], $("#video"), $("#objectsDart"));
+			}
+			if (winHeight > 1200){//show everything earlier when screen size is over 1200
+				showEarly = 1.5;
 			}
 			if (winHeight > 1600){
 				fadeInOnLoad.push($("#quoteOne"), $("#gloves"), $("#art"), $("#playfulText"));
+				showEarly = 1.5;
 			}
 			if (winHeight > 2400){
 				fadeInOnLoad.push(headers[2], $("#quoteTwo"), $("#dancingGuy"));
@@ -39,6 +44,7 @@ $("#worker").ready(function(){ //fixes incorrect initial offset issue.
 
 
 		scrollDownCTA.css("top", (winHeight - 300) + "px"); //Position CTA just above fold line.
+		fadeInOnLoad.push(scrollDownCTA);
 
 		function scrollDown(opacity){
 			var stop = false,
@@ -62,7 +68,6 @@ $("#worker").ready(function(){ //fixes incorrect initial offset issue.
 				}
 			)
 		};
-		scrollDown(0);
 
 		function fadeHeaders(){
 			headers.each(function(i, elem){
@@ -105,13 +110,22 @@ $("#worker").ready(function(){ //fixes incorrect initial offset issue.
 			//Tweak timing of individual items
 
 			if ( self.is("#video") || self.is("#objectsDart") ){
-				var timingValue = 200;
+				timingValue = 200 * showEarly;
+			}
+			if (self.is("#quoteOne") || self.is("#gloves") ){
+				timingValue = 300 * showEarly;
+			}
+			if (self.is("#art") || self.is("#playfulText") ){
+				timingValue = 300 * showEarly;
+			}
+			if (self.is("#quoteTwo") || self.is("#dancingGuy") ){
+				timingValue = 200 * showEarly;
 			}
 			if ( self.is("#shoes") || self.is("#text1") ){
-				var timingValue = 700;
+				timingValue = 700 * showEarly;
 			}
 			if ( self.is("#text") || self.is("#worker") ){
-				var timingValue = 600;
+				timingValue = 600 * showEarly;
 			}
 			//End timing tweaks
 			
@@ -134,6 +148,9 @@ $("#worker").ready(function(){ //fixes incorrect initial offset issue.
 				self.css("opacity", 0); //initially make all moving elems invisible.
 			}
 
+			//Scroll to top before doing anything else
+			$(window).scrollTop(0);
+
 			//stem only
 			if ( self.is("#stem") ){
 				elem.side = "top";
@@ -144,8 +161,9 @@ $("#worker").ready(function(){ //fixes incorrect initial offset issue.
 				elem.stem = true;
 				elem.speed = 1;
 				elem.isBottle = false;
+				fadeInOnLoad.push(self);
 			}
-			//applicator only !! THIS WAS A COPY PASTE, FILL IN WITH REAL VALUES
+			
 			
 			if ( self.is("#applicator") ){
 				elem.side = "top";
@@ -255,23 +273,34 @@ $("#worker").ready(function(){ //fixes incorrect initial offset issue.
 				len = fadeInOnLoad.length,
 				waitTime = 200;
 
-			fadeInOnLoad.each(function(i, elem){
-			var self = $(this);
-			self.css("opacity", 0);
-			});
-
-			function waitToFade (i) {
+			function waitToFade (self, specialDelay) {
 				setTimeout(function(){
-					$(fadeInOnLoad[i]).fadeTo("slow", 1);
-				}, waitTime);
+					self.fadeTo("slow", 1);
+				}, (specialDelay || waitTime) );
 				if (waitTime < 2500){
 					waitTime += 800;
 				}
+				if ( self.is("#scrollDown") ){
+					setTimeout(function(){
+						scrollDown(0);
+					}, specialDelay);
+				}
 			};
 
-			for (i; i<len; i+=1){
-				waitToFade(i);
-			}
+			fadeInOnLoad.each(function(i, elem){
+				var self = $(this);
+				self.css("opacity", 0);
+				if ( self.is("#stem") ){
+					var specialDelay = 3500;
+					waitToFade(self, specialDelay);
+				} 
+				else if( self.is("#scrollDown") ){
+					var specialDelay = 5000;
+					waitToFade(self, specialDelay);
+				}
+				else {waitToFade(self);}
+			});
+			//Start the "scroll down" button
 		}());
 	};
 
@@ -288,16 +317,21 @@ $("#worker").ready(function(){ //fixes incorrect initial offset issue.
 		initParallax();
 	}
 	*/
+
+
 	window.setTimeout(
 		function(){
-			window.scrollTo(0, 0);
 			/*fade out loading cover*/
 			var whiteCover = $("#cover");
+			whiteCover.css("position", "absolute");
 			whiteCover.fadeOut("slow");
 			whiteCover.addClass("jsEnabled");
+			$("#stem").css("position", "absolute");
+			$("#applicator").css("display", "block");
+			$("#bottle").css("display", "block");
 			initParallax();
 
-		}, 1500
+		}, 2500
 	);
 /*
 	// left: 37, up: 38, right: 39, down: 40,
